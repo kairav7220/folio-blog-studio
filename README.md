@@ -138,7 +138,7 @@ folio-blog-studio/
 
 ## License
 
-MIT c [kairav7220](https://github.com/kairav7220)
+MIT © [kairav7220](https://github.com/kairav7220)
 
 ---
 
