@@ -1,9 +1,9 @@
 <p align="center">
-  <img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&height=200&section=header&text=AskDB&fontSize=50&fontAlignY=35&desc=Natural%20Language%20%E2%86%92%20SQL%20%E2%86%92%20Answers&descAlignY=55" />
+  <img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&height=200&section=header&text=Folio&fontSize=50&fontAlignY=35&desc=AI%20Blog%20Studio%20%E2%80%94%20Multi-Agent%20LangGraph%20Pipeline&descAlignY=55" />
 </p>
 
 <p align="center">
-  <a href="https://askdb-text-to-sql.streamlit.app/" target="_blank">
+  <a href="https://folio-blog-studio.streamlit.app/" target="_blank">
     <img src="https://img.shields.io/badge/Live_Demo-Streamlit-FF4B4B?logo=streamlit&logoColor=white" alt="Live Demo"/>
   </a>
 </p>
@@ -11,92 +11,85 @@
 <p align="center">
   <a href="#features">Features</a> •
   <a href="#architecture">Architecture</a> •
-  <a href="#pages">Pages</a> •
-  <a href="#standalone-scripts">Standalone Scripts</a> •
+  <a href="#standalone-pipeline">Standalone Pipeline</a> •
   <a href="#quick-start">Quick Start</a> •
-  <a href="#evaluation">Evaluation</a> •
+  <a href="#configuration">Configuration</a> •
   <a href="#project-structure">Structure</a>
 </p>
 
 <p align="center">
   <img src="https://img.shields.io/badge/python-3.11-blue?logo=python&logoColor=white" alt="Python 3.11"/>
   <img src="https://img.shields.io/badge/Streamlit-UI-red?logo=streamlit&logoColor=white" alt="Streamlit"/>
-  <img src="https://img.shields.io/badge/LangChain-LCEL-important?logo=langchain" alt="LangChain"/>
-  <img src="https://img.shields.io/badge/Gemini-Primary%20LLM-yellow" alt="Gemini"/>
-  <img src="https://img.shields.io/badge/Groq-Fallback-blue" alt="Groq"/>
-  <img src="https://img.shields.io/badge/PostgreSQL-Neon-336791?logo=postgresql&logoColor=white" alt="PostgreSQL"/>
-  <img src="https://img.shields.io/badge/RAGAS-Evaluation-success" alt="RAGAS"/>
+  <img src="https://img.shields.io/badge/LangGraph-Agentic-blueviolet" alt="LangGraph"/>
+  <img src="https://img.shields.io/badge/LangChain-Core-009E73?logo=langchain" alt="LangChain"/>
+  <img src="https://img.shields.io/badge/Mistral-LLM-blue" alt="Mistral"/>
+  <img src="https://img.shields.io/badge/Tavily-Search-orange" alt="Tavily"/>
+  <img src="https://img.shields.io/badge/FLUX.1%20schnell-Images-pink" alt="FLUX"/>
+  <img src="https://img.shields.io/badge/SQLite-Library-yellow?logo=sqlite&logoColor=white" alt="SQLite"/>
   <img src="https://img.shields.io/badge/license-MIT-green" alt="MIT"/>
 </p>
 
 ---
 
-Ask a sales question in plain English. AskDB turns it into a SQL query, runs it against the database, and hands back an answer with the rows.
+Enter a topic, get a full researched, illustrated blog post. Built on a multi-agent LangGraph pipeline with a Streamlit editorial UI.
 
 ## Features
 
-- **Natural Language → SQL** — ask in plain English, get a streamed SQL query plus the result rows
-- **Dual-LLM Failover** — Gemini as primary with an automatic Groq fallback on failure
-- **Self-Healing SQL** — failed queries are auto-corrected against the schema (up to 3 retries)
-- **Read-Only Guard** — every query is validated to be `SELECT`/`WITH` before it runs
-- **RAGAS Evaluation** — one-click benchmark scoring (Context Precision + Helpfulness rubric)
-- **Live Schema Viewer** — inspect every table, its columns, and row counts without touching the data
-- **CSV → Database** — seed the database from CSVs, import new tables, or rebuild from source
-- **Score History** — every benchmark run is saved, charted as trends, and clearable with one click
+- **Multi-Agent Press Run** — LangGraph StateGraph: Route → Research (Tavily) → Plan → parallel section writers → Merge → Revise → Illustrate (FLUX.1-schnell) → Bind
+- **Live Progress** — every pipeline step streams to the UI while it runs
+- **Dual-Key Failover** — two Mistral API keys, automatically retried on failure
+- **AI Diagrams** — FLUX.1-schnell illustrations generated from captions and inserted under section headings
+- **Shelf Library** — every story saved to SQLite with versioning, word count, duration, and markdown export
+- **Editorial UI** — light "galley proof" design with a chat-style sidebar; regenerate, edit, and delete with confirmation
 
 ## Architecture
 
 ```mermaid
 flowchart LR
-  User["🧑 User"] --> UI["🖥️ Streamlit Frontend<br/>(frontend.py — 4 pages)"]
-  UI -->|"run_query(question)"| Backend["⚙️ Backend<br/>(backend.py — LCEL)"]
-  Backend --> Prompt["📝 SQL Prompt<br/>(schema + history)"]
-  Prompt --> LLM{"🔀 LLM<br/>Gemini → Groq fallback"}
-  LLM --> Fix{"🛠 Auto-fix<br/>on error, ≤3 retries"}
-  Fix --> DB[("🗄 Database<br/>st.connection (SQLite / Neon)")]
-  DB --> Results["📊 Result rows"]
-  Results --> UI
-  UI -->|"evaluate_ragas()"| Eval["📏 RAGAS<br/>(Context Precision + Helpfulness)"]
-  Eval --> History["📈 eval_history.json<br/>scores + trend charts"]
+  User["🧑 User"] --> Frontend["🖥️ Streamlit Frontend<br/>(Folio UI)"]
+  Frontend -->|"create_blog()"| Backend["⚙️ Backend<br/>(blog_studio_backend.py)"]
+  Backend --> Router{"🔀 Route<br/>open_book / hybrid / closed_book"}
+  Router -->|"needs_research"| Research["🔎 Research<br/>(Tavily)"]
+  Router -->|"closed_book"| Orchestrator
+  Research --> Orchestrator["📋 Orchestrator<br/>(Plan 5-9 sections)"]
+  Orchestrator --> Worker1["✍️ Worker A"]
+  Orchestrator --> Worker2["✍️ Worker B"]
+  Orchestrator --> Worker3["✍️ Worker C"]
+  Worker1 --> Merger["🔗 Merge<br/>(Combine sections)"]
+  Worker2 --> Merger
+  Worker3 --> Merger
+  Merger --> Illustrator["🎨 Illustrate<br/>(FLUX.1-schnell)"]
+  Illustrator --> Bind["📖 Bind<br/>(Final markdown)"]
+  Bind --> Shelf["💾 SQLite Shelf<br/>(blogs.db)"]
 ```
 
 | Layer | Technology |
 |---|---|
-| **Frontend** | Streamlit (custom theme, chat + eval dashboard) |
-| **Orchestration** | LangChain LCEL (schema → prompt → LLM → parser) |
-| **LLM** | Gemini `gemini-flash-lite-latest` primary, Groq `openai/gpt-oss-120b` fallback |
-| **Database** | `st.connection('app_db')` — SQLite locally, Neon Postgres on the cloud |
-| **Evaluation** | RAGAS (Context Precision, Rubrics-based Helpfulness) |
-| **Embeddings** | `sentence-transformers/all-MiniLM-L6-v2` |
+| **Frontend** | Streamlit (custom CSS, editorial design) |
+| **Orchestration** | LangGraph StateGraph (6 nodes, fan-out workers) |
+| **LLM** | Mistral (dual-key failover via `langchain-mistralai`) |
+| **Research** | Tavily Search API (5-10 parallel queries) |
+| **Image Generation** | FLUX.1-schnell (Hugging Face Inference API) |
+| **Storage** | SQLite (`blogs.db`) + local `images/` |
+| **Deployment** | Streamlit Community Cloud |
 
-## Pages
+## Standalone Pipeline
 
-| Page | What it does |
-|---|---|
-| **Ask the data** | Chat with the database — question in, SQL + answer + rows out, with a bounded auto-scrolling panel |
-| **Schema** | Browse tables, columns, types, keys, and row counts (metadata only, no row data) |
-| **Evaluate** | Run a 5-question RAGAS benchmark, view per-question scores, and watch trends over time |
-| **Database** | Import a CSV as a new table, rebuild the six seeded tables, or delete only user-added tables |
+`multi_agent_blog_writer.py` is the **original single-file version** of the pipeline — everything in one 536-line script with no Streamlit UI, no SQLite library, no image generation. It runs the same core flow (Route → Research → Plan → Workers → Merge → Revise → Bind) but outputs markdown directly to stdout.
 
-## Standalone Scripts
-
-`1.py`, `2.py`, and `create_db.py` are the **original single-file versions** of the pipeline — the stepping stones that grew into the full AskDB app. `1.py` runs a minimal Gemini 2.5 Flash LCEL chain against a local SQLite database and prints the generated SQL to stdout. `2.py` extends the same chain to Groq Llama 3.3 70B, runs the five benchmark questions, and scores them with RAGAS (Context Precision + Helpfulness) — the seed of today's **Evaluate** page. `create_db.py` reads the CSVs in `Data_CSV/` and builds the local `text_to_sql.db` SQLite file.
-
-Use them as a reference for the pipeline logic, or run them standalone:
+Use it as a reference for the pipeline logic, or run it standalone:
 
 ```bash
-python 1.py
-python 2.py
-python create_db.py
+python multi_agent_blog_writer.py
 ```
 
-The full AskDB app (`frontend.py` + `backend.py`) is the evolved version — a Streamlit UI, live schema viewer, streaming chat, self-healing SQL, and the RAGAS evaluation dashboard.
+The full Folio app (`blog_studio_backend.py` + `blog_studio_frontend.py`) is the evolved version with a UI, persistent storage, and diagram generation.
 
 ## Quick Start
 
 ```bash
-git clone https://github.com/kairav7220/AskDB.git
-cd AskDB
+git clone https://github.com/kairav7220/folio-blog-studio.git
+cd folio-blog-studio
 python -m venv .venv
 .venv\Scripts\activate        # Windows
 pip install -r requirements.txt
@@ -105,51 +98,42 @@ pip install -r requirements.txt
 Copy `.env.example` to `.env` and fill in your keys (see [Configuration](#configuration)):
 
 ```env
-GOOGLE_API_KEY="AIza..."
-GROQ_API_KEY="gsk_..."
+MISTRAL_API_KEY="..."
+MISTRAL_API_KEY_2="..."
+TAVILY_API_KEY="..."
+HF_API_KEY="..."
 ```
 
 ```bash
-streamlit run frontend.py
+streamlit run blog_studio_frontend.py
 ```
 
-Open `http://localhost:8501` — ask *"What was the budget of Product 12?"* in the chat and you get the SQL and the result.
+Open `http://localhost:8501` — click **New blog**, enter a topic, and start a press run.
 
-## Evaluation
+## Configuration
 
-The Evaluate page pushes five fixed questions through the pipeline and scores them with RAGAS — **Context Precision** (retrieval relevance) and a **1–5 Helpfulness rubric**. Each run is appended to `eval_history.json`, so scores can be tracked across runs with trend charts. Use **Clear history** (beside the Score history heading) to wipe all recorded runs.
+| Variable | Required | Purpose |
+|---|---|---|
+| `MISTRAL_API_KEY` | Yes | Primary Mistral LLM key |
+| `MISTRAL_API_KEY_2` | Optional | Failover Mistral key |
+| `TAVILY_API_KEY` | Yes | Tavily web search |
+| `HF_API_KEY` | Yes | Hugging Face (FLUX.1-schnell image generation) |
 
-| Metric | Description |
-|---|---|
-| Context Precision | How relevant the retrieved schema context was (0–1) |
-| Helpfulness | Rubric-scored answer quality (1–5) |
-
-Sample RAGAS results on the five benchmark questions:
-
-| Metric | Score |
-|---|---|
-| Context Precision | 1.0000 |
-| Helpfulness (Rubrics) | 3.80 / 5.00 |
+On Streamlit Community Cloud, add these in **Settings > Secrets** (same key names, TOML format). The backend reads from `st.secrets` automatically.
 
 ## Project Structure
 
 ```
-AskDB/
+folio-blog-studio/
 ├── README.md                      # Project documentation
-├── frontend.py                    # Streamlit app — all four pages + chat
-├── backend.py                     # LCEL chains, SQL gen/fix/exec, RAGAS eval
-├── vertexai_shim.py               # ragas import shim — do not remove
-├── 1.py                           # Minimal Gemini LCEL chain (standalone)
-├── 2.py                           # Groq chain + RAGAS evaluation (standalone)
+├── blog_studio_backend.py         # Full pipeline + SQLite + progress (self-contained)
+├── blog_studio_frontend.py        # Streamlit editorial UI
+├── multi_agent_blog_writer.py     # Original standalone pipeline (reference)
 ├── requirements.txt               # Python dependencies
 ├── .env.example                   # Required API keys template
 ├── .streamlit/
-│   ├── config.toml                # Theme (SQLedger light palette)
-│   └── secrets.toml               # Local DB URL (gitignored)
-├── static/
-│   ├── user_avatar.svg            # Chat avatar
-│   └── bot_avatar.svg             # Chat avatar
-└── Data_CSV/                      # Source CSVs (six seeded tables)
+│   └── config.toml                # fileWatcherType = "none"
+└── .gitignore
 ```
 
 ## License
@@ -160,9 +144,8 @@ MIT © [kairav7220](https://github.com/kairav7220)
 
 <p align="center">
   Built with <a href="https://streamlit.io">Streamlit</a> •
-  <a href="https://python.langchain.com">LangChain</a> •
-  <a href="https://ai.google.dev/gemini-api">Gemini</a> •
-  <a href="https://groq.com">Groq</a> •
-  <a href="https://neon.tech">Neon</a> •
-  <a href="https://docs.ragas.io">RAGAS</a>
+  <a href="https://langchain-ai.github.io/langgraph">LangGraph</a> •
+  <a href="https://www.mistral.ai">Mistral AI</a> •
+  <a href="https://tavily.com">Tavily</a> •
+  <a href="https://huggingface.co">Hugging Face</a>
 </p>
