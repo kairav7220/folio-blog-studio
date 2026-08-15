@@ -1,5 +1,7 @@
 <p align="center">
-  <img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&height=200&section=header&text=Folio&fontSize=50&fontAlignY=35&desc=AI%20Blog%20Studio%20%E2%80%94%20Multi-Agent%20LangGraph%20Pipeline&descAlignY=55" />
+  <a href="https://folio-blog-studio.streamlit.app/" target="_blank">
+    <img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&height=200&section=header&text=Folio&fontSize=50&fontAlignY=35&desc=AI%20Blog%20Studio%20%E2%80%94%20Multi-Agent%20LangGraph%20Pipeline&descAlignY=55" />
+  </a>
 </p>
 
 <p align="center">
