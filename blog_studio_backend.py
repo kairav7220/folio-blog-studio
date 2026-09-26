@@ -118,7 +118,7 @@ class State(TypedDict):
 # Pipeline: LLM plumbing (dual-key failover + throttle)
 # ---------------------------------------------------------------------------
 
-_LLM_MODEL = 'mistral-large-latest'
+_LLM_MODEL = 'ministral-8b-2512'
 _LLM_TEMPERATURE = 0.3
 _LLM_MAX_TOKENS = 8192
 
